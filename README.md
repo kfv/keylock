@@ -31,7 +31,7 @@ Rewind, Fast Forward, Volume, and Caps Lock keys are not locked. Mouse movement
 is also intact.
 
 ```sh
-USAGE: command [--debug] [--timer <timer>]
+USAGE: keylock [--debug] [--timer <timer>]
 
 OPTIONS:
   -d, --debug             Enable debug mode.
