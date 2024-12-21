@@ -1,8 +1,28 @@
-.DS_Store
+# Build files
 /.build
-/Packages
+
+# User settings
 xcuserdata/
 DerivedData/
-.swiftpm/configuration/registries.json
-.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+
+# Swift Package Manager
+/Packages
+Package.pins
+Package.resolved
+*.xcodeproj
+.swiftpm
+
+# Miscellaneous
 .netrc
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+
+# General
+.DS_Store
