@@ -40,10 +40,19 @@ class EventHandler {
     }
     
     private func setupEventTap() {
-        let eventMask = CGEventMask(
-            (1 << CGEventType.keyDown.rawValue) |
-            (1 << CGEventType.keyUp.rawValue)
-        )
+        let keyboardEvents = (1 << CGEventType.keyDown.rawValue) |
+                             (1 << CGEventType.keyUp.rawValue)
+
+        let mouseClickEvents = (1 << CGEventType.leftMouseDown.rawValue)  |
+                               (1 << CGEventType.leftMouseUp.rawValue)    |
+                               (1 << CGEventType.rightMouseDown.rawValue) |
+                               (1 << CGEventType.rightMouseUp.rawValue)
+
+        let mouseMotionEvents = (1 << CGEventType.mouseMoved.rawValue) |
+                                (1 << CGEventType.scrollWheel.rawValue)
+
+        let eventMask = CGEventMask(keyboardEvents | mouseClickEvents | mouseMotionEvents)
+
         guard let eventTap = CGEvent.tapCreate(
             tap: .cghidEventTap,
             place: .headInsertEventTap,
@@ -69,20 +78,33 @@ class EventHandler {
         proxy: CGEventTapProxy,
         type: CGEventType,
         event: CGEvent) -> Unmanaged<CGEvent>? {
-        guard type == .keyDown || type == .keyUp else {
-            return Unmanaged.passRetained(event)
+
+        if type == .keyDown || type == .keyUp {
+            let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+            let controlFlag = event.flags.contains(.maskControl)
+            let eventType = type == .keyDown ? "pressed" : "released"
+
+            debugLog("Key Code: \(keyCode),\t" +
+                     "Control Flag: \(controlFlag),\t" +
+                     "Event Type: (\(type.rawValue)) \(eventType)")
+
+            if controlFlag && keyCode == KeyCode.u.rawValue && type == .keyDown {
+                debugLog("Input devices unlocked")
+                CFRunLoopStop(CFRunLoopGetCurrent())
+            }
+        } else {
+            let eventType = switch type {
+                case .leftMouseDown: "left pressed"
+                case .leftMouseUp: "left released"
+                case .rightMouseDown: "right pressed"
+                case .rightMouseUp: "right released"
+                case .mouseMoved: "moved"
+                case .scrollWheel: "scrolled"
+                default: "other"
+            }
+            debugLog("Mouse Event: (\(type.rawValue)) \(eventType)")
         }
-        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
-        let controlFlag = event.flags.contains(.maskControl)
-        let eventType = type == .keyDown ? "pressed" : "released"
-        debugLog("Key Code: \(keyCode),\t" +
-                 "Control Flag: \(controlFlag),\t" +
-                 "Event Type: (\(type.rawValue)) \(eventType)")
-        // Checking if control+u is pressed
-        if controlFlag && keyCode == KeyCode.u.rawValue && type == .keyDown {
-            debugLog("Keyboard unlocked")
-            CFRunLoopStop(CFRunLoopGetCurrent())
-        }
+
         return isLocked ? nil : Unmanaged.passRetained(event)
     }
 }
