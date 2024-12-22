@@ -51,7 +51,18 @@ class EventHandler {
         let mouseMotionEvents = (1 << CGEventType.mouseMoved.rawValue) |
                                 (1 << CGEventType.scrollWheel.rawValue)
 
-        let eventMask = CGEventMask(keyboardEvents | mouseClickEvents | mouseMotionEvents)
+        let mouseDragEvents = (1 << CGEventType.leftMouseDragged.rawValue)  |
+                              (1 << CGEventType.rightMouseDragged.rawValue) |
+                              (1 << CGEventType.otherMouseDragged.rawValue)
+
+        let mouseOtherEvents = (1 << CGEventType.otherMouseDown.rawValue) |
+                               (1 << CGEventType.otherMouseUp.rawValue)
+
+        let eventMask = CGEventMask(keyboardEvents    |
+                                    mouseClickEvents  |
+                                    mouseMotionEvents |
+                                    mouseDragEvents   |
+                                    mouseOtherEvents)
 
         guard let eventTap = CGEvent.tapCreate(
             tap: .cghidEventTap,
