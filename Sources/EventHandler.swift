@@ -35,6 +35,17 @@ class EventHandler {
 
 
     func run() {
+        print("""
+        
+        ╭────────────────────────────────────────╮
+        │                                        │
+        │          Input Devices Locked          │
+        │                                        │
+        │        Press Ctrl + U to Unlock        │
+        │                                        │
+        ╰────────────────────────────────────────╯
+        
+        """)
         setupEventTap() // Setup event tap to capture key events
         CFRunLoopRun()  // Start the run loop to handle events
     }
