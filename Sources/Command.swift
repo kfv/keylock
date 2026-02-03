@@ -1,7 +1,9 @@
 import ArgumentParser
 
 struct Command: ParsableCommand {
-    static let configuration = CommandConfiguration(commandName: "keylock")
+    static var configuration: CommandConfiguration {
+        CommandConfiguration(commandName: "keylock")
+    }
 
     @Flag(name: .shortAndLong, help: "Enable debug mode.")
     var debug = false
