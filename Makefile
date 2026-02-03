@@ -1,25 +1,43 @@
-# Makefile for keylock
-PROGNAME = keylock
+PROG = keylock
 
-# Variables
+INSTALL ?= install
+RM      ?= rm -f
+MKDIR   ?= install -d
+
 PREFIX ?= /usr/local
-BINDIR = $(PREFIX)/bin
+BINDIR = ${DESTDIR}${PREFIX}/bin
 
-# Targets
+OBJDIR = .build
+RELDIR = ${OBJDIR}/release
+
 all: build
+
+bootstrap:
+	${MKDIR} ${BINDIR}
 
 build:
 	swift build -c release
 
-install: build
-	mkdir -p $(BINDIR)
-	cp -f .build/release/$(PROGNAME) $(BINDIR)/$(PROGNAME)
+debug:
+	swift build -c debug
+
+install: bootstrap build
+	${INSTALL} ${RELDIR}/${PROG} ${BINDIR}/${PROG}
 
 uninstall:
-	rm -f $(BINDIR)/$(PROGNAME)
+	${RM} ${BINDIR}/${PROG}
 
 clean:
-	rm -rf .build
+	${RM} -r ${OBJDIR}
 
-.PHONY: all build install clean
+.DEFAULT:
+	@echo "Usage: make [target]"
+	@echo
+	@echo "Targets:"
+	@echo "  build       Build the project in release mode"
+	@echo "  debug       Build the project in debug mode"
+	@echo "  install     Install the project"
+	@echo "  uninstall   Uninstall the project"
+	@echo "  clean       Clean the project"
 
+.PHONY: all bootstrap build debug install uninstall clean
